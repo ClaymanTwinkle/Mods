@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.renderer.*;
+import net.minecraft.init.Items;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
@@ -14,10 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelPlayer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -58,6 +57,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rafradek.spin.render.SwordRender;
 
 @Mod(modid = "rafradek_spin", name = "Spin To Win", version = "1.4", guiFactory = "rafradek.spin.SpinGuiFactory")
 public class SpinToWin {
@@ -258,12 +258,13 @@ public class SpinToWin {
                         player.getEntityData().setTag("EntitiesDelayS", new NBTTagList());
                     }
 
-
                     for (EntityLivingBase target : player.world.getEntitiesWithinAABB(EntityLivingBase.class,
                             player.getEntityBoundingBox().grow(range, 0, range), new Predicate<EntityLivingBase>() {
                                 @Override
                                 public boolean apply(EntityLivingBase input) {
-                                    return input != event.getEntity() && isSuitableTarget(player, input, false, true) && input.getDistanceSq(player) < (range + input.width / 2) * (range + input.width / 2);
+                                    return input != event.getEntity()
+                                            && isSuitableTarget(player, input, false, true)
+                                            && input.getDistanceSq(player) < (range + input.width / 2) * (range + input.width / 2);
                                 }
 
                             })) {
@@ -342,44 +343,11 @@ public class SpinToWin {
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post event) {
         ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
-        if (event.getEntity().getDataManager().get(SPIN_TIME)) {
-
-            GlStateManager.popMatrix();
-            if (!stack.isEmpty() && !event.getEntity().isInvisible()) {
-                Tessellator tessellator = Tessellator.getInstance();
-                BufferBuilder renderer = tessellator.getBuffer();
-                GlStateManager.pushMatrix();
-                GlStateManager.translate((float) 0, (float) 0 + 0.1D, (float) 0);
-
-                int cooldown = getSpinCooldown(stack, event.getEntityPlayer());
+        Entity entity = event.getEntity();
+        if (entity.getDataManager().get(SPIN_TIME)) {
+            if (!stack.isEmpty() && !entity.isInvisible()) {
                 double range = SpinToWin.range + EnchantmentHelper.getEnchantmentLevel(ench, stack) * 0.36 + 0.1;
-                float alpha = 0.3f + (float) ((this.getDuration(stack, event.getEntityPlayer()) - event.getEntityPlayer().getEntityData().getInteger("SpinTime")) % cooldown) / (float) cooldown * 0.5f;
-
-                Minecraft.getMinecraft().getTextureManager().bindTexture(SPIN_TEXTURE);
-                GlStateManager.disableLighting();
-                GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-                if (isSword(stack.getItem()))
-                    GlStateManager.color(0.8F, 0.65F, 0.4F, alpha);
-                else
-                    GlStateManager.color(0.6F, 0.18F, 0.1F, alpha);
-                /*
-                 * if(TF2weapons.getTeamForDisplay(living)==0){ GL11.glColor4f(1.0F,
-                 * 0.0F, 0.0F, 0.28F); } else{ GL11.glColor4f(0.0F, 0.0F, 1.0F,
-                 * 0.28F); }
-                 */
-                renderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-                renderer.pos(-range, 0.0D, range).tex(0D, 1D).endVertex();
-                renderer.pos(range, 0.0D, range).tex(1D, 1D).endVertex();
-                renderer.pos(range, 0.0D, -range).tex(1D, 0.0D).endVertex();
-                renderer.pos(-range, 0.0D, -range).tex(0D, 0.0D).endVertex();
-                tessellator.draw();
-
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1F);
-                GL11.glDisable(GL11.GL_BLEND);
-                // GlStateManager.enableTexture2D();
-                GlStateManager.enableLighting();
-                GlStateManager.popMatrix();
+                SwordRender.render(entity, range, 0, 0.1D, 0);
             }
         }
     }
