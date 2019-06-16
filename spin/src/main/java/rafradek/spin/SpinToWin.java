@@ -6,9 +6,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.renderer.*;
-import net.minecraft.init.Items;
-import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.mojang.authlib.GameProfile;
@@ -17,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelPlayer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -69,9 +65,6 @@ public class SpinToWin {
     public static UUID SPIN_AS = UUID.fromString("0706d45a-daae-429c-843c-23c03b721b32");
     public static UUID SPIN_AD = UUID.fromString("b308e311-0557-405d-bb3e-551fd34edc25");
 
-    private static final ResourceLocation SPIN_TEXTURE = new ResourceLocation("rafradek_spin",
-            "textures/misc/spin.png");
-
     public static Configuration conf;
     public static int spinID;
     public static double range;
@@ -85,7 +78,6 @@ public class SpinToWin {
     public static ResourceLocation[] blacklistItems;
     public static ResourceLocation[] swordItems;
     public static ResourceLocation[] toolItems;
-    public static EntityPlayer fakePlayer;
 
     @Mod.EventHandler
     public void init(FMLPreInitializationEvent event) {
