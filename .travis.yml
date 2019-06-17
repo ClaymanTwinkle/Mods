@@ -1,7 +1,6 @@
 language: java
 sudo: required
-
+before_install: sudo chmod +x ./gradlew
 script:
-- chmod +x ./gradlew
 - ./gradlew :spin:setupDecompWorkspace
 - ./gradlew :spin:build
