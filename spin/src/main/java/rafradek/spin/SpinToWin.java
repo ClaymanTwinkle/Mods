@@ -307,8 +307,10 @@ public class SpinToWin {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre event) {
-        if (event.getEntity().getDataManager().get(SPIN_TIME)) {
-            event.getRenderer().getMainModel().rightArmPose = ArmPose.BLOCK;
+        EntityLivingBase entity = event.getEntityLiving();
+        if (entity.getDataManager().get(SPIN_TIME)) {
+            event.getRenderer().getMainModel().rightArmPose = ArmPose.BOW_AND_ARROW;
+            entity.setArrowCountInEntity(0);
         }
     }
 
@@ -323,7 +325,7 @@ public class SpinToWin {
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post event) {
         ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
-        Entity entity = event.getEntity();
+        EntityLivingBase entity = event.getEntityLiving();
         if (entity.getDataManager().get(SPIN_TIME)) {
             if (!stack.isEmpty() && !entity.isInvisible()) {
                 double range = SpinToWin.range + EnchantmentHelper.getEnchantmentLevel(ench, stack) * 0.36 + 0.1;
