@@ -13,7 +13,5 @@ deploy:
   file_glob: true
   skip_cleanup: true
   on:
-    repo: ClaymanTwinkle/Mods
-    branches:    # ← new!
-      only:      # ← new!
-        - master # ← new!
+    tags: true
+    all_branches: true
