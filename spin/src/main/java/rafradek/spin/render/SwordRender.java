@@ -18,7 +18,7 @@ public class SwordRender {
     public static void render(Entity entity, double range, double x, double y, double z) {
         GlStateManager.pushMatrix();
         {
-            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(x, y+1, z);
             int t = entity.ticksExisted * 10;
             GlStateManager.pushMatrix();
             {

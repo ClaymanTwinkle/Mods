@@ -308,19 +308,7 @@ public class SpinToWin {
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre event) {
         if (event.getEntity().getDataManager().get(SPIN_TIME)) {
-
-            event.getRenderer().getMainModel().rightArmPose = ArmPose.BOW_AND_ARROW;
-            GlStateManager.pushMatrix();
-            ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
-            int spinCooldown = this.getSpinCooldown(stack, event.getEntityPlayer());
-            if (event.getEntityPlayer().getEntityData().getInteger("SpinTime") > this.getDuration(stack, event.getEntityPlayer()) - spinCooldown * 0.8f) {
-                GlStateManager.rotate((this.getDuration(stack, event.getEntityPlayer()) -
-                        (event.getEntity().getEntityData().getInteger("SpinTime") - event.getPartialRenderTick())) * -(90 / this.getSpinCooldown(stack, event.getEntityPlayer())), 0, 1, 0);
-            } else {
-                GlStateManager.rotate((this.getDuration(stack, event.getEntityPlayer()) -
-                        (event.getEntity().getEntityData().getInteger("SpinTime") - event.getPartialRenderTick())) * (360 / this.getSpinCooldown(stack, event.getEntityPlayer())), 0, 1, 0);
-            }
-
+            event.getRenderer().getMainModel().rightArmPose = ArmPose.BLOCK;
         }
     }
 
@@ -339,7 +327,7 @@ public class SpinToWin {
         if (entity.getDataManager().get(SPIN_TIME)) {
             if (!stack.isEmpty() && !entity.isInvisible()) {
                 double range = SpinToWin.range + EnchantmentHelper.getEnchantmentLevel(ench, stack) * 0.36 + 0.1;
-                SwordRender.render(entity, range, 0, 0.1D, 0);
+                SwordRender.render(entity, range, 0, 0, 0);
             }
         }
     }
